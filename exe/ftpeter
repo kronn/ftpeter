@@ -2,4 +2,4 @@
 
 require "ftpeter"
 
-Ftpeter.new.go
+Ftpeter.new(ARGV).go

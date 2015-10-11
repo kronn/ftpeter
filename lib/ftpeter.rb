@@ -3,27 +3,27 @@ require "pathname"
 
 # TODO extract git-backend to detect changes
 # TODO extract lftp-backend to deploy files
-# TODO extract parameter-passing
 # TODO setup help and option-parsing
 module Ftpeter
-  def go
-    # external arguments
-    host = ARGV[0] # the host to deploy to
-    dir  = ARGV[1] || '/' # the directory to change into
-    last = ARGV[2] || 'origin/master' # get the last deployed version and current version
+  def initialize(args)
+    @host = args[0] # the host to deploy to
+    @dir  = args[1] || '/' # the directory to change into
+    @last = args[2] || 'origin/master' # get the last deployed version and current version
+  end
 
+  def go
     # internal vars
     lftp_script = []
     lftp_fn = Pathname.new("./lftp_script").expand_path
 
     # build up diff since last version
-    files = `git log #{last}... --name-status --oneline`.split("\n")
+    files = `git log #{@last}... --name-status --oneline`.split("\n")
     deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, '') }.uniq
     changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, '') }.uniq
 
     # lftp connection header
-    lftp_script << "open #{host}"
-    lftp_script << "cd #{dir}"
+    lftp_script << "open #{@host}"
+    lftp_script << "cd #{@dir}"
 
     # lftp file commands
     lftp_script << deleted.map do |fn|
