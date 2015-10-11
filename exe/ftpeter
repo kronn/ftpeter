@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
-require "ftpeter"
+require "ftpeter/cli"
 
-Ftpeter.new(ARGV).go
+Ftpeter::CLI.new(ARGV).go
