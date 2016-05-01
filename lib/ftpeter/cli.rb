@@ -61,7 +61,11 @@ module Ftpeter
 
     def okay?
       $stderr.puts "is this script okay?"
-      confirm('yes')
+      begin
+        confirm('yes')
+      rescue
+        false
+      end
     end
   end
 end
