@@ -91,7 +91,7 @@ module Ftpeter
       $stderr.print "[yes, No] > "
 
       if $stdin.gets.chomp != confirmation
-        abort("you did not enter '#{confirmation}', aborting")
+        raise "you did not enter '#{confirmation}', aborting"
       else
         true
       end
@@ -101,7 +101,7 @@ module Ftpeter
       $stderr.puts "is this script okay?"
       begin
         confirm("yes")
-      rescue
+      rescue RuntimeError
         false
       end
     end
