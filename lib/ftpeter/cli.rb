@@ -4,8 +4,8 @@ module Ftpeter
   class CLI
     def initialize(args)
       @host = args[0] # the host to deploy to
-      @dir  = args[1] || '/' # the directory to change into
-      @last = args[2] || 'origin/master' # get the last deployed version and current version
+      @dir  = args[1] || "/" # the directory to change into
+      @last = args[2] || "origin/master" # get the last deployed version and current version
     end
 
     def go
@@ -15,8 +15,8 @@ module Ftpeter
 
       # build up diff since last version
       files = `git log #{@last}... --name-status --oneline`.split("\n")
-      deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, '') }.uniq
-      changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, '') }.uniq
+      deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
+      changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
 
       # lftp connection header
       lftp_script << "open #{@host}"
@@ -31,7 +31,7 @@ module Ftpeter
       end
 
       # write script to file
-      lftp_fn.open('w') do |f|
+      lftp_fn.open("w") do |f|
         f << lftp_script.flatten.join("\n")
         f << "\n"
       end
@@ -49,8 +49,8 @@ module Ftpeter
       end
     end
 
-    def confirm(confirmation = 'yes')
-      $stderr.print '[yes, No] > '
+    def confirm(confirmation = "yes")
+      $stderr.print "[yes, No] > "
 
       if $stdin.gets.chomp != confirmation
         abort("you did not enter '#{confirmation}', aborting")
@@ -62,7 +62,7 @@ module Ftpeter
     def okay?
       $stderr.puts "is this script okay?"
       begin
-        confirm('yes')
+        confirm("yes")
       rescue
         false
       end
