@@ -26,6 +26,8 @@ module Ftpeter
       files = `git log #{@last}... --name-status --oneline`.split("\n")
       deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
       changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
+      added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
+      newdirs = added.map { |fn| Pathname.new(fn).dirname.to_s }.uniq.reject { |fn| fn == "." }
 
       # lftp connection header
       lftp_script << "open #{@host}"
@@ -35,6 +37,9 @@ module Ftpeter
       # lftp file commands
       lftp_script << deleted.map do |fn|
         "rm #{fn}"
+      end
+      lftp_script << newdirs.map do |fn|
+        "mkdir -p #{fn}"
       end
       lftp_script << changed.map do |fn|
         "put #{fn} -o #{fn}"
