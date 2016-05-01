@@ -5,5 +5,5 @@ require "pathname"
 # TODO extract lftp-backend to deploy files
 # TODO setup help and option-parsing
 module Ftpeter
-  autload :CLI, "ftpeter/cli"
+  autoload :CLI, "ftpeter/cli"
 end
