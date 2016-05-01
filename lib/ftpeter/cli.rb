@@ -1,5 +1,4 @@
 require "pathname"
-require "uri"
 
 module Ftpeter
   class CLI
@@ -14,9 +13,20 @@ module Ftpeter
     end
 
     def configure
-      @credentials = `grep #{URI(@host).host} ~/.netrc`.chomp
-        .split("\n").first
-        .match(/login (?<user>\S+) password (?<pass>\S+)/)
+      cleaned_host = if @host =~ %r!//!
+                        require "uri"
+                        URI(@host).host
+                      else
+                        @host
+                      end
+
+      @credentials = begin
+                       `grep #{cleaned_host} ~/.netrc`.chomp
+                         .split("\n").first
+                         .match(/login (?<user>\S+) password (?<pass>\S+)/)
+                     rescue NoMethodError => e
+                       nil
+                     end
       @commands    = Pathname.new("./ftpeterrc").read.chomp
     end
 
@@ -34,7 +44,7 @@ module Ftpeter
 
       # lftp connection header
       lftp_script << "open #{@host}"
-      lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}"
+      lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}" if @credentials
       lftp_script << "cd #{@dir}"
 
       # lftp file commands
