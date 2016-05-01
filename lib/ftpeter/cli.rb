@@ -27,7 +27,12 @@ module Ftpeter
                      rescue NoMethodError => e
                        nil
                      end
-      @commands    = Pathname.new("./ftpeterrc").read.chomp
+
+      @commands    = begin
+                       Pathname.new("./.ftpeterrc").read.chomp
+                     rescue Errno::ENOENT=> e
+                       nil
+                     end
     end
 
     def go
@@ -59,7 +64,7 @@ module Ftpeter
       end
       lftp_script << @commands.split("\n").map do |cmd|
         "!#{cmd}"
-      end
+      end if @commands
       lftp_script << '!echo ""'
       lftp_script << '!echo "Deployment complete"'
 
