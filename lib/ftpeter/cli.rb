@@ -4,7 +4,9 @@ require "uri"
 module Ftpeter
   class CLI
     def initialize(args)
-      @host = args[0] # the host to deploy to
+      raise ArgumentError, "Please specify a host to deploy to" unless args[0]
+
+      @host = args[0]
       @dir  = args[1] || "/" # the directory to change into
       @last = args[2] || "origin/master" # get the last deployed version and current version
 
