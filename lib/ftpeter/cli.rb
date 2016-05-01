@@ -15,6 +15,7 @@ module Ftpeter
       @credentials = `grep #{URI(@host).host} ~/.netrc`.chomp
         .split("\n").first
         .match(/login (?<user>\S+) password (?<pass>\S+)/)
+      @commands    = Pathname.new("./ftpeterrc").read.chomp
     end
 
     def go
@@ -43,6 +44,9 @@ module Ftpeter
       end
       lftp_script << changed.map do |fn|
         "put #{fn} -o #{fn}"
+      end
+      lftp_script << @commands.split("\n").map do |cmd|
+        "!#{cmd}"
       end
 
       # write script to file
