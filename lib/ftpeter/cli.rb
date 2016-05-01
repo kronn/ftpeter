@@ -1,4 +1,5 @@
 require "pathname"
+require "uri"
 
 module Ftpeter
   class CLI
@@ -6,6 +7,14 @@ module Ftpeter
       @host = args[0] # the host to deploy to
       @dir  = args[1] || "/" # the directory to change into
       @last = args[2] || "origin/master" # get the last deployed version and current version
+
+      configure
+    end
+
+    def configure
+      @credentials = `grep #{URI(@host).host} ~/.netrc`.chomp
+        .split("\n").first
+        .match(/login (?<user>\S+) password (?<pass>\S+)/)
     end
 
     def go
@@ -20,6 +29,7 @@ module Ftpeter
 
       # lftp connection header
       lftp_script << "open #{@host}"
+      lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}"
       lftp_script << "cd #{@dir}"
 
       # lftp file commands
