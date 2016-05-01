@@ -48,6 +48,8 @@ module Ftpeter
       lftp_script << @commands.split("\n").map do |cmd|
         "!#{cmd}"
       end
+      lftp_script << '!echo ""'
+      lftp_script << '!echo "Deployment complete"'
 
       # write script to file
       lftp_fn.open("w") do |f|
