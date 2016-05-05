@@ -57,7 +57,7 @@ https://git.lanpartei.de/kronn/ftpeter
 
 ## License
 
-"MIT-alike, not no military usage and no sublicensing"
+"MIT-alike, but no military usage and no sublicensing"
 
 
 Copyright (c) 2015 Matthias Viehweger
