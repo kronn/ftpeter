@@ -54,6 +54,9 @@ module Ftpeter
       lftp_script << changes.newdirs.map do |fn|
         "mkdir -p #{fn}"
       end
+      lftp_script << changes.added.map do |fn|
+        "put #{fn} -o #{fn}"
+      end
       lftp_script << changes.changed.map do |fn|
         "put #{fn} -o #{fn}"
       end

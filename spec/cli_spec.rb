@@ -35,8 +35,8 @@ describe Ftpeter::CLI do
 open example.net$
 cd /$
 mkdir -p lib
-put lib/foo.rb -o lib/foo.rb
 put lib/new_foo.rb -o lib/new_foo.rb
+put lib/foo.rb -o lib/foo.rb
 !echo ""$
 !echo "Deployment complete"$
 \={80}$~m
