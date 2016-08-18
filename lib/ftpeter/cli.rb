@@ -69,16 +69,16 @@ module Ftpeter
         f << "\n"
       end
 
-      puts "="*80
-      puts lftp_fn.read
-      puts "="*80
-      puts
+      $stdout.puts "="*80
+      $stdout.puts lftp_fn.read
+      $stdout.puts "="*80
+      $stdout.puts
 
       if okay?
         `lftp -f #{lftp_fn}`
         lftp_fn.delete
       else
-        puts "#{lftp_fn} is left for your editing pleasure"
+        $stdout.puts "#{lftp_fn} is left for your editing pleasure"
       end
     end
 
@@ -93,7 +93,7 @@ module Ftpeter
     end
 
     def okay?
-      $stderr.puts "is this script okay?"
+      $stdout.puts "is this script okay?"
       begin
         confirm("yes")
       rescue RuntimeError
