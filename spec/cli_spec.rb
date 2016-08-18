@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Ftpeter::CLI do
+  include FakeFS::SpecHelpers
+
   it 'expects at least a hostname' do
     expect {
       described_class.new
