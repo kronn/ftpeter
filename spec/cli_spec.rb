@@ -13,6 +13,14 @@ describe Ftpeter::CLI do
 
   it 'has a godly go-method' do
     allow(subject).to receive(:okay?).and_return(false)
+    allow(subject).to receive(:get_changes_from).and_return(
+      Ftpeter::CLI::Changes.new(
+        [], #deleted
+        ["lib/foo.rb"], #changed
+        ["lib/new_foo.rb"], #added
+        ["lib"], #newdirs
+      )
+    )
 
     $stdout = StringIO.new
 
@@ -23,7 +31,15 @@ describe Ftpeter::CLI do
     output = $stdout.string
 
     # the generated script
-    expect(output).to match /!echo "Deployment complete"$/
+    expect(output).to match %r~^\={80}$
+open example.net$
+cd /$
+mkdir -p lib
+put lib/foo.rb -o lib/foo.rb
+put lib/new_foo.rb -o lib/new_foo.rb
+!echo ""$
+!echo "Deployment complete"$
+\={80}$~m
 
     # information to user
     expect(output).to match /is left for your editing pleasure/
