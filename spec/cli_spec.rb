@@ -46,4 +46,27 @@ put lib/foo.rb -o lib/foo.rb
     # information to user
     expect(output).to match /is left for your editing pleasure/
   end
+
+  context 'knows how to get changes' do
+    it 'only for git (for now)' do
+      expect {
+        subject.get_changes_from(:svn)
+      }.to raise_error(ArgumentError, "There's only git-support for now")
+    end
+
+    it 'by returning a Changes-object' do
+      expect(subject.get_changes_from(:git)).to be_a Ftpeter::CLI::Changes
+    end
+  end
+end
+
+describe Ftpeter::CLI::Changes do
+  it 'is a value-object' do
+    expect(subject).to be_a Struct
+
+    expect(subject).to respond_to :deleted
+    expect(subject).to respond_to :changed
+    expect(subject).to respond_to :added
+    expect(subject).to respond_to :newdirs
+  end
 end
