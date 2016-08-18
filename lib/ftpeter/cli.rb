@@ -104,7 +104,14 @@ module Ftpeter
       end
     end
 
-    class Changes < Struct.new(:deleted, :changed, :added, :newdirs)
+    Changes = Struct.new(:deleted, :changed, :added) do
+      def newdirs
+        @newdirs ||= added.map { |fn|
+          Pathname.new(fn).dirname.to_s
+        }.uniq.reject { |fn|
+          fn == "."
+        }
+      end
     end
 
     def get_changes_from(vcs)
@@ -115,9 +122,8 @@ module Ftpeter
       deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
       changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
       added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
-      newdirs = added.map { |fn| Pathname.new(fn).dirname.to_s }.uniq.reject { |fn| fn == "." }
 
-      Changes.new(deleted, changed, added, newdirs)
+      Changes.new(deleted, changed, added)
     end
   end
 end

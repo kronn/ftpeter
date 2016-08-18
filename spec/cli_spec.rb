@@ -20,7 +20,6 @@ describe Ftpeter::CLI do
         [], #deleted
         ["lib/foo.rb"], #changed
         ["lib/new_foo.rb"], #added
-        ["lib"], #newdirs
       )
     )
 
@@ -68,5 +67,15 @@ describe Ftpeter::CLI::Changes do
     expect(subject).to respond_to :changed
     expect(subject).to respond_to :added
     expect(subject).to respond_to :newdirs
+
+    expect(subject).to respond_to :deleted=
+    expect(subject).to respond_to :changed=
+    expect(subject).to respond_to :added=
+    expect(subject).to_not respond_to :newdirs=
+  end
+
+  it 'can calculate the needed new directories' do
+    expect(described_class.new([], ['lib/changed.rb'], ['lib/new.rb']).newdirs)
+      .to eq ['lib']
   end
 end
