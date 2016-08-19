@@ -32,17 +32,18 @@ describe Ftpeter::CLI do
     }.to_not raise_error
 
     output = $stdout.string
-
-    # the generated script
-    expect(output).to match %r~^\={80}$
-open example.net$
-cd /$
+    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr("/", "\/")}$"}
+open example.net
+cd /
 mkdir -p lib
 put lib/new_foo.rb -o lib/new_foo.rb
 put lib/foo.rb -o lib/foo.rb
-!echo ""$
-!echo "Deployment complete"$
-\={80}$~m
+!echo ""
+!echo "Deployment complete"
+    EOSCRIPT
+
+    # the generated script
+    expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m
 
     # information to user
     expect(output).to match /is left for your editing pleasure/
