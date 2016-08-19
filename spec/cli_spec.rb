@@ -18,7 +18,7 @@ describe Ftpeter::CLI do
   it 'has a godly go-method' do
     allow(subject).to receive(:okay?).and_return(false)
     allow(subject).to receive(:get_changes_from).and_return(
-      Ftpeter::CLI::Changes.new(
+      Ftpeter::Backend::Changes.new(
         [], #deleted
         ["lib/foo.rb"], #changed
         ["lib/new_foo.rb"], #added
@@ -61,12 +61,12 @@ put lib/foo.rb -o lib/foo.rb
     end
 
     it 'by returning a Changes-object' do
-      expect(subject.get_changes_from(:git)).to be_a Ftpeter::CLI::Changes
+      expect(subject.get_changes_from(:git)).to be_a Ftpeter::Backend::Changes
     end
   end
 end
 
-describe Ftpeter::CLI::Changes do
+describe Ftpeter::Backend::Changes do
   it 'is a value-object' do
     expect(subject).to be_a Struct
 

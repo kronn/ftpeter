@@ -104,16 +104,6 @@ module Ftpeter
       end
     end
 
-    Changes = Struct.new(:deleted, :changed, :added) do
-      def newdirs
-        @newdirs ||= added.map { |fn|
-          Pathname.new(fn).dirname.to_s
-        }.uniq.reject { |fn|
-          fn == "."
-        }
-      end
-    end
-
     def get_changes_from(vcs)
       raise ArgumentError, "There's only git-support for now" unless vcs == :git
 
@@ -123,7 +113,20 @@ module Ftpeter
       changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
       added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
 
-      Changes.new(deleted, changed, added)
+      Ftpeter::Backend::Changes.new(deleted, changed, added)
+    end
+  end
+
+  module Backend
+    Changes = Struct.new(:deleted, :changed, :added) do
+      def newdirs
+        @newdirs ||= added.map { |fn|
+          Pathname.new(fn).dirname.to_s
+        }.uniq.reject { |fn|
+          fn == "."
+        }
+      end
     end
   end
 end
+
