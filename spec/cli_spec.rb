@@ -25,13 +25,6 @@ describe Ftpeter::CLI do
       )
     )
 
-    $stdout = StringIO.new
-
-    expect {
-      subject.go
-    }.to_not raise_error
-
-    output = $stdout.string
     expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr("/", "\/")}$"}
 open example.net
 cd /
@@ -41,6 +34,14 @@ put lib/foo.rb -o lib/foo.rb
 !echo ""
 !echo "Deployment complete"
     EOSCRIPT
+
+    $stdout = StringIO.new
+
+    expect {
+      subject.go
+    }.to_not raise_error
+
+    output = $stdout.string
 
     # the generated script
     expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m
