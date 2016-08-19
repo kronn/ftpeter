@@ -107,13 +107,7 @@ module Ftpeter
     def get_changes_from(vcs)
       raise ArgumentError, "There's only git-support for now" unless vcs == :git
 
-      # build up diff since last version
-      files = `git log #{@last}... --name-status --oneline`.split("\n")
-      deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
-      changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
-      added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
-
-      Ftpeter::Backend::Changes.new(deleted, changed, added)
+      Ftpeter::Backend::Git.new(@last).changes
     end
   end
 
@@ -125,6 +119,20 @@ module Ftpeter
         }.uniq.reject { |fn|
           fn == "."
         }
+      end
+    end
+
+    class Git
+      attr_reader :changes
+
+      def initialize(last)
+        # build up diff since last version
+        files = `git log #{last}... --name-status --oneline`.split("\n")
+        deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
+        changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
+        added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
+
+        @changes = Ftpeter::Backend::Changes.new(deleted, changed, added)
       end
     end
   end
