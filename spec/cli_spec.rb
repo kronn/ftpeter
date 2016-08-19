@@ -5,6 +5,10 @@ describe Ftpeter::CLI do
 
   subject { described_class.new(["example.net"]) }
 
+  # FIXME remove this once we don't parse netrc ourselves anymore
+  before(:all) { FileUtils.touch("#{ENV['HOME']}/.netrc") }
+
+
   it 'expects at least a hostname' do
     expect {
       described_class.new
