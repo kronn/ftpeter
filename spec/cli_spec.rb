@@ -3,15 +3,13 @@ require 'spec_helper'
 describe Ftpeter::CLI do
   include FakeFS::SpecHelpers
 
+  subject { described_class.new(["example.net"]) }
+
   it 'expects at least a hostname' do
     expect {
       described_class.new
     }.to raise_error ArgumentError
   end
-
-  subject {
-    described_class.new(["example.net"])
-  }
 
   it 'has a godly go-method' do
     allow(subject).to receive(:okay?).and_return(false)
