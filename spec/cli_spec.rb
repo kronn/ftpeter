@@ -64,6 +64,30 @@ put lib/foo.rb -o lib/foo.rb
       expect(subject.get_changes_from(:git)).to be_a Ftpeter::Backend::Changes
     end
   end
+
+  context 'knows how to transport changes' do
+    let(:changes) do
+      Ftpeter::Backend::Changes.new(
+        [], #deleted
+        ["lib/foo.rb"], #changed
+        ["lib/new_foo.rb"], #added
+      )
+    end
+
+    it 'with a proxy-object' do
+      expect(subject.transport(changes)).to be_a Ftpeter::Transport
+    end
+
+    it 'only for lftp (for now)' do
+      expect {
+        subject.transport(changes).via(:cyberduck)
+      }.to raise_error(ArgumentError, "There's only lftp-support for now")
+    end
+
+    it 'by returning a Transport-object' do
+      expect(subject.transport(changes).via(:lftp)).to be_a Ftpeter::Transport::Lftp
+    end
+  end
 end
 
 describe Ftpeter::Backend::Changes do

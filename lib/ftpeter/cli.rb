@@ -109,6 +109,10 @@ module Ftpeter
 
       Ftpeter::Backend::Git.new(@last).changes
     end
+
+    def transport(changes)
+      Ftpeter::Transport.new(changes)
+    end
   end
 
   module Backend
@@ -133,6 +137,23 @@ module Ftpeter
         added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
 
         @changes = Ftpeter::Backend::Changes.new(deleted, changed, added)
+      end
+    end
+  end
+
+  class Transport
+    def initialize(changes)
+      @changes = changes
+    end
+
+    def via(uploader)
+      raise ArgumentError, "There's only lftp-support for now" unless uploader == :lftp
+
+      Ftpeter::Transport::Lftp.new(@changes)
+    end
+
+    class Lftp
+      def initialize(changes)
       end
     end
   end
