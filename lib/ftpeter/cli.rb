@@ -198,6 +198,10 @@ module Ftpeter
       def commands
         @lftp_script
       end
+
+      def inform
+        @lftp_script.join("\n")
+      end
     end
   end
 end

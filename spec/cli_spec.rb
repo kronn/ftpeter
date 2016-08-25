@@ -152,5 +152,9 @@ put lib/foo.rb -o lib/foo.rb
 
   it 'writes the script to a file'
   it 'executes the script'
-  it 'outputs the script'
+
+  it 'outputs the script' do
+    expect(subject.inform).to be_a String
+    expect(subject.inform).to match /open.*cd.*mkdir.*put/m
+  end
 end
