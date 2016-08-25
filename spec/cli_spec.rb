@@ -77,16 +77,6 @@ put lib/foo.rb -o lib/foo.rb
     it 'with a proxy-object' do
       expect(subject.transport(changes)).to be_a Ftpeter::Transport
     end
-
-    it 'only for lftp (for now)' do
-      expect {
-        subject.transport(changes).via(:cyberduck)
-      }.to raise_error(ArgumentError, "There's only lftp-support for now")
-    end
-
-    it 'by returning a Transport-object' do
-      expect(subject.transport(changes).via(:lftp)).to be_a Ftpeter::Transport::Lftp
-    end
   end
 end
 
@@ -108,5 +98,24 @@ describe Ftpeter::Backend::Changes do
   it 'can calculate the needed new directories' do
     expect(described_class.new([], ['lib/changed.rb'], ['lib/new.rb']).newdirs)
       .to eq ['lib']
+  end
+end
+
+describe Ftpeter::Transport do
+  subject { described_class.new(changes) }
+  let(:changes) { stub(:changes) }
+
+  it 'can forward the transport to a backend' do
+    expect(subject).to respond_to :via
+  end
+
+  it 'only for lftp (for now)' do
+    expect {
+      subject.via(:cyberduck)
+    }.to raise_error(ArgumentError, "There's only lftp-support for now")
+  end
+
+  it 'by returning a concrete Transport-object' do
+    expect(subject.via(:lftp)).to be_a Ftpeter::Transport::Lftp
   end
 end
