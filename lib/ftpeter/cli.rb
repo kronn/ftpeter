@@ -205,6 +205,11 @@ module Ftpeter
       end
 
       def execute
+        @script_fn.open("w") do |f|
+          f << @lftp_script.flatten.join("\n")
+          f << "\n"
+        end
+
         system("lftp -f #{@script_fn}")
       end
     end

@@ -150,13 +150,14 @@ put lib/foo.rb -o lib/foo.rb
     expect(subject.commands).to eql expected_script
   end
 
-  it 'writes the script to a file'
+  it 'writes and executes the script' do
+    script_fn = subject.instance_variable_get('@script_fn')
 
-  it 'executes the script' do
-    script_fn = Pathname.new("./lftp_script").expand_path
-
-    allow(subject).to receive(:system)
+    expect(subject).to receive(:system)
       .with("lftp -f #{script_fn}")
+
+    expect(script_fn).to receive(:open)
+      .with('w')
 
     expect {
       subject.execute
