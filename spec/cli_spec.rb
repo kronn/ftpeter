@@ -66,16 +66,8 @@ put lib/foo.rb -o lib/foo.rb
   end
 
   context 'knows how to transport changes' do
-    let(:changes) do
-      Ftpeter::Backend::Changes.new(
-        [], #deleted
-        ["lib/foo.rb"], #changed
-        ["lib/new_foo.rb"], #added
-      )
-    end
-
     it 'with a proxy-object' do
-      expect(subject.transport(changes)).to be_a Ftpeter::Transport
+      expect(subject.transport(double(:changes))).to be_a Ftpeter::Transport
     end
   end
 end
@@ -103,7 +95,17 @@ end
 
 describe Ftpeter::Transport do
   subject { described_class.new(changes) }
-  let(:changes) { stub(:changes) }
+  let(:changes) do
+    Ftpeter::Backend::Changes.new(
+      [], #deleted
+      ["lib/foo.rb"], #changed
+      ["lib/new_foo.rb"], #added
+    )
+  end
+  let(:connection) do
+    Struct.new(:host, :credentials, :dir, :commands)
+      .new("example.net", nil, "/", nil)
+  end
 
   it 'can forward the transport to a backend' do
     expect(subject).to respond_to :via
@@ -111,11 +113,44 @@ describe Ftpeter::Transport do
 
   it 'only for lftp (for now)' do
     expect {
-      subject.via(:cyberduck)
+      subject.via(connection, :cyberduck)
     }.to raise_error(ArgumentError, "There's only lftp-support for now")
   end
 
   it 'by returning a concrete Transport-object' do
-    expect(subject.via(:lftp)).to be_a Ftpeter::Transport::Lftp
+    expect(subject.via(connection, :lftp)).to be_a Ftpeter::Transport::Lftp
   end
+end
+
+describe Ftpeter::Transport::Lftp do
+  subject{ described_class.new(connection, changes) }
+  let(:changes) do
+    Ftpeter::Backend::Changes.new(
+      [], #deleted
+      ["lib/foo.rb"], #changed
+      ["lib/new_foo.rb"], #added
+    )
+  end
+  let(:connection) do
+    Struct.new(:host, :credentials, :dir, :commands)
+      .new("example.net", nil, "/", nil)
+  end
+
+  it 'generates a set of commands' do
+    expected_script = <<-EOSCRIPT.lines.map { |l| l.chomp }
+open example.net
+cd /
+mkdir -p lib
+put lib/new_foo.rb -o lib/new_foo.rb
+put lib/foo.rb -o lib/foo.rb
+!echo ""
+!echo "Deployment complete"
+    EOSCRIPT
+
+    expect(subject.commands).to eql expected_script
+  end
+
+  it 'writes the script to a file'
+  it 'executes the script'
+  it 'outputs the script'
 end

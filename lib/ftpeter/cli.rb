@@ -146,14 +146,57 @@ module Ftpeter
       @changes = changes
     end
 
-    def via(uploader)
+    def via(connection, uploader)
       raise ArgumentError, "There's only lftp-support for now" unless uploader == :lftp
 
-      Ftpeter::Transport::Lftp.new(@changes)
+      Ftpeter::Transport::Lftp.new(connection, @changes)
     end
 
     class Lftp
-      def initialize(changes)
+      def initialize(connection, changes)
+        @changes = changes
+        @lftp_script = []
+
+        @host = connection.host
+        @credentials = connection.credentials
+        @dir = connection.dir
+        @commands = connection.commands
+
+        prepare
+      end
+
+      def prepare
+        # lftp connection header
+        @lftp_script << "open #{@host}"
+        @lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}" if @credentials
+        @lftp_script << "cd #{@dir}"
+
+        # lftp file commands
+        @lftp_script << @changes.deleted.map do |fn|
+          "rm #{fn}"
+        end
+        @lftp_script << @changes.newdirs.map do |fn|
+          "mkdir -p #{fn}"
+        end
+        @lftp_script << @changes.added.map do |fn|
+          "put #{fn} -o #{fn}"
+        end
+        @lftp_script << @changes.changed.map do |fn|
+          "put #{fn} -o #{fn}"
+        end
+        @lftp_script << @commands.split("\n").map do |cmd|
+          "!#{cmd}"
+        end if @commands
+        @lftp_script << '!echo ""'
+        @lftp_script << '!echo "Deployment complete"'
+
+        @lftp_script.flatten!.compact!
+
+        @lftp_script
+      end
+
+      def commands
+        @lftp_script
       end
     end
   end
