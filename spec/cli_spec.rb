@@ -151,7 +151,17 @@ put lib/foo.rb -o lib/foo.rb
   end
 
   it 'writes the script to a file'
-  it 'executes the script'
+
+  it 'executes the script' do
+    script_fn = Pathname.new("./lftp_script").expand_path
+
+    allow(subject).to receive(:system)
+      .with("lftp -f #{script_fn}")
+
+    expect {
+      subject.execute
+    }.to_not raise_error
+  end
 
   it 'outputs the script' do
     expect(subject.inform).to be_a String

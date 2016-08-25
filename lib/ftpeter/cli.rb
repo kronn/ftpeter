@@ -156,6 +156,7 @@ module Ftpeter
       def initialize(connection, changes)
         @changes = changes
         @lftp_script = []
+        @script_fn = Pathname.new("./lftp_script").expand_path
 
         @host = connection.host
         @credentials = connection.credentials
@@ -201,6 +202,10 @@ module Ftpeter
 
       def inform
         @lftp_script.join("\n")
+      end
+
+      def execute
+        system("lftp -f #{@script_fn}")
       end
     end
   end
