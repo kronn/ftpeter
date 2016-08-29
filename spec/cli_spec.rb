@@ -18,7 +18,7 @@ describe Ftpeter::CLI do
   it 'has a godly go-method' do
     expect(subject).to receive(:okay?).and_return(false)
     expect(subject).to receive(:get_changes_from).and_return(
-      Ftpeter::Backend::Changes.new(
+      Ftpeter::Changes.new(
         [], #deleted
         ["lib/foo.rb"], #changed
         ["lib/new_foo.rb"], #added
@@ -56,7 +56,7 @@ put lib/foo.rb -o lib/foo.rb
   it 'can take action' do
     expect(subject).to receive(:okay?).and_return(true)
     expect(subject).to receive(:get_changes_from).and_return(
-      Ftpeter::Backend::Changes.new(
+      Ftpeter::Changes.new(
         [], #deleted
         ["lib/foo.rb"], #changed
         ["lib/new_foo.rb"], #added
@@ -100,7 +100,7 @@ put lib/foo.rb -o lib/foo.rb
     end
 
     it 'by returning a Changes-object' do
-      expect(subject.get_changes_from(:git)).to be_a Ftpeter::Backend::Changes
+      expect(subject.get_changes_from(:git)).to be_a Ftpeter::Changes
     end
   end
 
@@ -111,7 +111,7 @@ put lib/foo.rb -o lib/foo.rb
   end
 end
 
-describe Ftpeter::Backend::Changes do
+describe Ftpeter::Changes do
   it 'is a value-object' do
     expect(subject).to be_a Struct
 
@@ -135,7 +135,7 @@ end
 describe Ftpeter::Transport do
   subject { described_class.new(changes) }
   let(:changes) do
-    Ftpeter::Backend::Changes.new(
+    Ftpeter::Changes.new(
       [], #deleted
       ["lib/foo.rb"], #changed
       ["lib/new_foo.rb"], #added
@@ -161,7 +161,7 @@ describe Ftpeter::Transport do
   end
 end
 
-describe Ftpeter::Transport::Connection do
+describe Ftpeter::Connection do
   it 'is a value-object' do
     expect(subject).to be_a Struct
 
@@ -180,14 +180,14 @@ end
 describe Ftpeter::Transport::Lftp do
   subject{ described_class.new(connection, changes) }
   let(:changes) do
-    Ftpeter::Backend::Changes.new(
+    Ftpeter::Changes.new(
       [], #deleted
       ["lib/foo.rb"], #changed
       ["lib/new_foo.rb"], #added
     )
   end
   let(:connection) do
-    Ftpeter::Transport::Connection.new("example.net", nil, "/", nil)
+    Ftpeter::Connection.new("example.net", nil, "/", nil)
   end
 
   it 'generates a set of commands' do

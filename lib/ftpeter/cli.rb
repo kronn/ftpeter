@@ -34,7 +34,7 @@ module Ftpeter
                        nil
                      end
 
-      @connection = Ftpeter::Transport::Connection.new(
+      @connection = Ftpeter::Connection.new(
         @host,
         @credentials,
         @dir,
@@ -86,17 +86,19 @@ module Ftpeter
     end
   end
 
-  module Backend
-    Changes = Struct.new(:deleted, :changed, :added) do
-      def newdirs
-        @newdirs ||= added.map { |fn|
-          Pathname.new(fn).dirname.to_s
-        }.uniq.reject { |fn|
-          fn == "."
-        }
-      end
+  Changes = Struct.new(:deleted, :changed, :added) do
+    def newdirs
+      @newdirs ||= added.map { |fn|
+        Pathname.new(fn).dirname.to_s
+      }.uniq.reject { |fn|
+        fn == "."
+      }
     end
+  end
 
+  Connection = Struct.new(:host, :credentials, :dir, :commands)
+
+  module Backend
     class Git
       attr_reader :changes
 
@@ -107,7 +109,7 @@ module Ftpeter
         changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
         added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
 
-        @changes = Ftpeter::Backend::Changes.new(deleted, changed, added)
+        @changes = Ftpeter::Changes.new(deleted, changed, added)
       end
     end
   end
@@ -122,8 +124,6 @@ module Ftpeter
 
       Ftpeter::Transport::Lftp.new(connection, @changes)
     end
-
-    Connection = Struct.new(:host, :credentials, :dir, :commands)
 
     class Lftp
       attr_reader :script
