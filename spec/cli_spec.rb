@@ -16,8 +16,8 @@ describe Ftpeter::CLI do
   end
 
   it 'has a godly go-method' do
-    allow(subject).to receive(:okay?).and_return(false)
-    allow(subject).to receive(:get_changes_from).and_return(
+    expect(subject).to receive(:okay?).and_return(false)
+    expect(subject).to receive(:get_changes_from).and_return(
       Ftpeter::Backend::Changes.new(
         [], #deleted
         ["lib/foo.rb"], #changed
@@ -44,13 +44,52 @@ put lib/foo.rb -o lib/foo.rb
     output = $stdout.string
 
     # the generated script
-    expect(Pathname.new('./lftp_script').read).to match /#{expected_script}/
+    expect(Pathname.new('./lftp_script').expand_path.read).to match /#{expected_script}/
 
     # output of the script to the user
     expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m
 
     # information to user
     expect(output).to match /is left for your editing pleasure/
+  end
+
+  it 'can take action' do
+    expect(subject).to receive(:okay?).and_return(true)
+    expect(subject).to receive(:get_changes_from).and_return(
+      Ftpeter::Backend::Changes.new(
+        [], #deleted
+        ["lib/foo.rb"], #changed
+        ["lib/new_foo.rb"], #added
+      )
+    )
+    expect_any_instance_of(Ftpeter::Transport::Lftp)
+      .to receive(:execute)
+      .and_return(true)
+
+    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr("/", "\/")}$"}
+open example.net
+cd /
+mkdir -p lib
+put lib/new_foo.rb -o lib/new_foo.rb
+put lib/foo.rb -o lib/foo.rb
+!echo ""
+!echo "Deployment complete"
+    EOSCRIPT
+
+    $stdout = StringIO.new
+
+    expect {
+      subject.go
+    }.to_not raise_error
+
+    output = $stdout.string
+
+    # output of the script to the user
+    expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m
+
+    # the generated script is cleaned up
+    expect(Pathname.new('./lftp_script').expand_path).to_not be_readable
+    expect(output).to_not match /is left for your editing pleasure/
   end
 
   context 'knows how to get changes' do
@@ -122,6 +161,22 @@ describe Ftpeter::Transport do
   end
 end
 
+describe Ftpeter::Transport::Connection do
+  it 'is a value-object' do
+    expect(subject).to be_a Struct
+
+    expect(subject).to respond_to :host
+    expect(subject).to respond_to :credentials
+    expect(subject).to respond_to :dir
+    expect(subject).to respond_to :commands
+
+    expect(subject).to respond_to :host=
+    expect(subject).to respond_to :credentials=
+    expect(subject).to respond_to :dir=
+    expect(subject).to respond_to :commands=
+  end
+end
+
 describe Ftpeter::Transport::Lftp do
   subject{ described_class.new(connection, changes) }
   let(:changes) do
@@ -132,8 +187,7 @@ describe Ftpeter::Transport::Lftp do
     )
   end
   let(:connection) do
-    Struct.new(:host, :credentials, :dir, :commands)
-      .new("example.net", nil, "/", nil)
+    Ftpeter::Transport::Connection.new("example.net", nil, "/", nil)
   end
 
   it 'generates a set of commands' do
@@ -151,15 +205,14 @@ put lib/foo.rb -o lib/foo.rb
   end
 
   it 'writes and executes the script' do
-    script_fn = subject.instance_variable_get('@script_fn')
-
     expect(subject).to receive(:system)
-      .with("lftp -f #{script_fn}")
+      .with("lftp -f #{subject.script}")
 
-    expect(script_fn).to receive(:open)
+    expect(subject.script).to receive(:open)
       .with('w')
 
     expect {
+      subject.persist
       subject.execute
     }.to_not raise_error
   end
@@ -167,5 +220,10 @@ put lib/foo.rb -o lib/foo.rb
   it 'outputs the script' do
     expect(subject.inform).to be_a String
     expect(subject.inform).to match /open.*cd.*mkdir.*put/m
+  end
+
+  it 'cleans up any residual files' do
+    expect(subject.script).to receive(:delete)
+    expect { subject.cleanup }.to_not raise_error
   end
 end

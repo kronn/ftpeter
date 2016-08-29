@@ -33,55 +33,26 @@ module Ftpeter
                      rescue Errno::ENOENT=> e
                        nil
                      end
+
+      @connection = Ftpeter::Transport::Connection.new(
+        @host,
+        @credentials,
+        @dir,
+        @commands
+      )
     end
 
     def go
-      # internal vars
-      lftp_script = []
-      lftp_fn = Pathname.new("./lftp_script").expand_path
-
       changes = get_changes_from(:git)
+      upload  = transport(changes).via(@connection, :lftp)
 
-      # lftp connection header
-      lftp_script << "open #{@host}"
-      lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}" if @credentials
-      lftp_script << "cd #{@dir}"
-
-      # lftp file commands
-      lftp_script << changes.deleted.map do |fn|
-        "rm #{fn}"
-      end
-      lftp_script << changes.newdirs.map do |fn|
-        "mkdir -p #{fn}"
-      end
-      lftp_script << changes.added.map do |fn|
-        "put #{fn} -o #{fn}"
-      end
-      lftp_script << changes.changed.map do |fn|
-        "put #{fn} -o #{fn}"
-      end
-      lftp_script << @commands.split("\n").map do |cmd|
-        "!#{cmd}"
-      end if @commands
-      lftp_script << '!echo ""'
-      lftp_script << '!echo "Deployment complete"'
-
-      # write script to file
-      lftp_fn.open("w") do |f|
-        f << lftp_script.flatten.join("\n")
-        f << "\n"
-      end
-
-      $stdout.puts "="*80
-      $stdout.puts lftp_fn.read
-      $stdout.puts "="*80
-      $stdout.puts
+      $stdout.puts "="*80, upload.inform, "="*80, nil
+      upload.persist
 
       if okay?
-        `lftp -f #{lftp_fn}`
-        lftp_fn.delete
+        upload.execute and upload.cleanup
       else
-        $stdout.puts "#{lftp_fn} is left for your editing pleasure"
+        $stdout.puts "#{upload.script} is left for your editing pleasure"
       end
     end
 
@@ -152,11 +123,15 @@ module Ftpeter
       Ftpeter::Transport::Lftp.new(connection, @changes)
     end
 
+    Connection = Struct.new(:host, :credentials, :dir, :commands)
+
     class Lftp
+      attr_reader :script
+
       def initialize(connection, changes)
         @changes = changes
         @lftp_script = []
-        @script_fn = Pathname.new("./lftp_script").expand_path
+        @script = Pathname.new("./lftp_script").expand_path
 
         @host = connection.host
         @credentials = connection.credentials
@@ -204,13 +179,19 @@ module Ftpeter
         @lftp_script.join("\n")
       end
 
-      def execute
-        @script_fn.open("w") do |f|
+      def persist
+        script.open("w") do |f|
           f << @lftp_script.flatten.join("\n")
           f << "\n"
         end
+      end
 
-        system("lftp -f #{@script_fn}")
+      def execute
+        system("lftp -f #{script}")
+      end
+
+      def cleanup
+        script.delete
       end
     end
   end
