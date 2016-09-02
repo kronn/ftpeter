@@ -33,57 +33,26 @@ module Ftpeter
                      rescue Errno::ENOENT=> e
                        nil
                      end
+
+      @connection = Ftpeter::Connection.new(
+        @host,
+        @credentials,
+        @dir,
+        @commands
+      )
     end
 
     def go
-      # internal vars
-      lftp_script = []
-      lftp_fn = Pathname.new("./lftp_script").expand_path
+      changes = get_changes_from(:git)
+      upload  = transport(changes).via(@connection, :lftp)
 
-      # build up diff since last version
-      files = `git log #{@last}... --name-status --oneline`.split("\n")
-      deleted = files.grep(/^[RD]/).map { |l| l.gsub(/^[RD]\s+/, "") }.uniq
-      changed = files.grep(/^[ACMR]/).map { |l| l.gsub(/^[ACMR]\s+/, "") }.uniq
-      added   = files.grep(/^[A]/).map { |l| l.gsub(/^[A]\s+/, "") }.uniq
-      newdirs = added.map { |fn| Pathname.new(fn).dirname.to_s }.uniq.reject { |fn| fn == "." }
-
-      # lftp connection header
-      lftp_script << "open #{@host}"
-      lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}" if @credentials
-      lftp_script << "cd #{@dir}"
-
-      # lftp file commands
-      lftp_script << deleted.map do |fn|
-        "rm #{fn}"
-      end
-      lftp_script << newdirs.map do |fn|
-        "mkdir -p #{fn}"
-      end
-      lftp_script << changed.map do |fn|
-        "put #{fn} -o #{fn}"
-      end
-      lftp_script << @commands.split("\n").map do |cmd|
-        "!#{cmd}"
-      end if @commands
-      lftp_script << '!echo ""'
-      lftp_script << '!echo "Deployment complete"'
-
-      # write script to file
-      lftp_fn.open("w") do |f|
-        f << lftp_script.flatten.join("\n")
-        f << "\n"
-      end
-
-      puts "="*80
-      puts lftp_fn.read
-      puts "="*80
-      puts
+      $stdout.puts "="*80, upload.inform, "="*80, nil
+      upload.persist
 
       if okay?
-        `lftp -f #{lftp_fn}`
-        lftp_fn.delete
+        upload.execute and upload.cleanup
       else
-        puts "#{lftp_fn} is left for your editing pleasure"
+        $stdout.puts "#{upload.script} is left for your editing pleasure"
       end
     end
 
@@ -98,12 +67,23 @@ module Ftpeter
     end
 
     def okay?
-      $stderr.puts "is this script okay?"
+      $stdout.puts "is this script okay?"
       begin
         confirm("yes")
       rescue RuntimeError
         false
       end
     end
+
+    def get_changes_from(vcs)
+      raise ArgumentError, "There's only git-support for now" unless vcs == :git
+
+      Ftpeter::Backend::Git.new(@last).changes
+    end
+
+    def transport(changes)
+      Ftpeter::Transport.new(changes)
+    end
   end
 end
+
