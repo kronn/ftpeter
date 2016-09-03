@@ -12,25 +12,26 @@ module Ftpeter
       configure
     end
 
+    # TODO: extract code into Connection-class
     def configure
       cleaned_host = if @host =~ %r!//!
-                        require "uri"
-                        URI(@host).host
-                      else
-                        @host
-                      end
+                       require "uri"
+                       URI(@host).host
+                     else
+                       @host
+                     end
 
       @credentials = begin
                        `grep #{cleaned_host} ~/.netrc`.chomp
                          .split("\n").first
                          .match(/login (?<user>\S+) password (?<pass>\S+)/)
-                     rescue NoMethodError => e
+                     rescue NoMethodError
                        nil
                      end
 
       @commands    = begin
                        Pathname.new("./.ftpeterrc").read.chomp
-                     rescue Errno::ENOENT=> e
+                     rescue Errno::ENOENT
                        nil
                      end
 

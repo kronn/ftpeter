@@ -3,9 +3,9 @@ module Ftpeter
     def newdirs
       @newdirs ||= added.map { |fn|
         Pathname.new(fn).dirname.to_s
-      }.uniq.reject { |fn|
+      }.uniq.reject do |fn|
         fn == "."
-      }
+      end
     end
   end
 end
