@@ -1,5 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
+# Style Choices
+
 Metrics/LineLength:
   Max: 100
 
@@ -8,3 +10,10 @@ Style/BlockDelimiters:
 
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
+
+
+# Rejection of nonsensical Rules
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled:
+    false
