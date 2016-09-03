@@ -21,7 +21,9 @@ module Ftpeter
       def prepare
         # lftp connection header
         @lftp_script << "open #{@host}"
-        @lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}" if @credentials
+        if @credentials
+          @lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}"
+        end
         @lftp_script << "cd #{@dir}"
 
         # lftp file commands

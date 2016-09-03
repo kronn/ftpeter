@@ -7,7 +7,7 @@ module Ftpeter
 
       @host = args[0]
       @dir  = args[1] || "/" # the directory to change into
-      @last = args[2] || "origin/master" # get the last deployed version and current version
+      @last = args[2] || "origin/master" # get the last deployed version
 
       configure
     end

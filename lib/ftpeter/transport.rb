@@ -1,5 +1,11 @@
 module Ftpeter
   class Transport
+    class Unsupported < ArgumentError
+      def message
+        "There is only lftp-support for now"
+      end
+    end
+
     autoload :Lftp, "ftpeter/transport/lftp"
 
     def initialize(changes)
@@ -7,7 +13,7 @@ module Ftpeter
     end
 
     def via(connection, uploader)
-      raise ArgumentError, "There's only lftp-support for now" unless uploader == :lftp
+      raise Unsupported unless uploader == :lftp
 
       Ftpeter::Transport::Lftp.new(connection, @changes)
     end

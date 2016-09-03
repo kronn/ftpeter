@@ -21,7 +21,7 @@ describe Ftpeter::Transport do
   it 'only for lftp (for now)' do
     expect {
       subject.via(connection, :cyberduck)
-    }.to raise_error(ArgumentError, "There's only lftp-support for now")
+    }.to raise_error(Ftpeter::Transport::Unsupported)
   end
 
   it 'by returning a concrete Transport-object' do

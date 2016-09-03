@@ -44,7 +44,8 @@ put lib/foo.rb -o lib/foo.rb
     output = $stdout.string
 
     # the generated script
-    expect(Pathname.new('./lftp_script').expand_path.read).to match /#{expected_script}/
+    expected_script_fn = Pathname.new('./lftp_script').expand_path.read
+    expect(expected_script_fn).to match /#{expected_script}/
 
     # output of the script to the user
     expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m

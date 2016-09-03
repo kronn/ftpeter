@@ -8,12 +8,17 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Matthias Viehweger"]
   spec.email         = ["kronn@kronn.de"]
 
-  spec.summary       = %q{Deployments via FTP}
-  spec.description   = %q{Upload or delete files that have changed in git using lftp. lftp supports ftp, ftps, sftp and more.}
+  spec.summary       = "Deployments via FTP"
+  spec.description   = <<-EODESC
+Upload or delete files that have changed in git using lftp.
+lftp supports ftp, ftps, sftp and more.
+  EODESC
   spec.homepage      = "https://git.lanpartei.de/kronn/ftpeter"
   spec.license       = "MIT"
 
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.files         = `git ls-files -z`
+    .split("\x0")
+    .reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
