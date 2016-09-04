@@ -112,14 +112,6 @@ Style/PercentLiteralDelimiters:
   Exclude:
     - 'lib/ftpeter/cli.rb'
 
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'spec/ftpeter/cli_spec.rb'
-
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: AllowForAlignment.
