@@ -47,7 +47,7 @@ module Ftpeter
       changes = get_changes_from(:git)
       upload  = transport(changes).via(@connection, :lftp)
 
-      $stdout.puts "="*80, upload.inform, "="*80, nil
+      $stdout.puts "=" * 80, upload.inform, "=" * 80, nil
       upload.persist
 
       if okay?
@@ -87,4 +87,3 @@ module Ftpeter
     end
   end
 end
-

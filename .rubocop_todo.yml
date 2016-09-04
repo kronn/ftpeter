@@ -23,15 +23,6 @@ Style/AndOr:
   Exclude:
     - 'lib/ftpeter/cli.rb'
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: Keywords.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW
-Style/CommentAnnotation:
-  Exclude:
-    - 'lib/ftpeter.rb'
-    - 'spec/ftpeter/cli_spec.rb'
-
 # Offense count: 7
 Style/Documentation:
   Exclude:
@@ -43,18 +34,6 @@ Style/Documentation:
     - 'lib/ftpeter/cli.rb'
     - 'lib/ftpeter/transport.rb'
     - 'lib/ftpeter/transport/lftp.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/ElseAlignment:
-  Exclude:
-    - 'lib/ftpeter/cli.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/EmptyLines:
-  Exclude:
-    - 'spec/ftpeter/cli_spec.rb'
 
 # Offense count: 21
 # Cop supports --auto-correct.
@@ -68,21 +47,6 @@ Style/FrozenStringLiteralComment:
 Style/GuardClause:
   Exclude:
     - 'lib/ftpeter/cli.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Width.
-Style/IndentationWidth:
-  Exclude:
-    - 'lib/ftpeter/cli.rb'
-
-# Offense count: 12
-# Cop supports --auto-correct.
-Style/LeadingCommentSpace:
-  Exclude:
-    - 'spec/ftpeter/cli_spec.rb'
-    - 'spec/ftpeter/transport/lftp_spec.rb'
-    - 'spec/ftpeter/transport_spec.rb'
 
 # Offense count: 1
 Style/MultilineBlockChain:
@@ -101,39 +65,10 @@ Style/MultilineMethodCallIndentation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/MutableConstant:
-  Exclude:
-    - 'lib/ftpeter/version.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
 # Configuration parameters: PreferredDelimiters.
 Style/PercentLiteralDelimiters:
   Exclude:
     - 'lib/ftpeter/cli.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: AllowForAlignment.
-Style/SpaceAroundOperators:
-  Exclude:
-    - 'lib/ftpeter/cli.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: space, no_space
-Style/SpaceBeforeBlockBraces:
-  Exclude:
-    - 'spec/ftpeter/transport/lftp_spec.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-# SupportedStyles: space, no_space
-Style/SpaceInsideBlockBraces:
-  Exclude:
-    - 'spec/ftpeter/cli_spec.rb'
 
 # Offense count: 72
 # Cop supports --auto-correct.
@@ -158,11 +93,3 @@ Style/StringLiteralsInInterpolation:
 Style/SymbolProc:
   Exclude:
     - 'spec/ftpeter/transport/lftp_spec.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: final_newline, final_blank_line
-Style/TrailingBlankLines:
-  Exclude:
-    - 'lib/ftpeter/cli.rb'

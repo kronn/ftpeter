@@ -4,9 +4,9 @@ describe Ftpeter::Transport do
   subject { described_class.new(changes) }
   let(:changes) do
     Ftpeter::Changes.new(
-      [], #deleted
-      ["lib/foo.rb"], #changed
-      ["lib/new_foo.rb"], #added
+      [], # deleted
+      ["lib/foo.rb"], # changed
+      ["lib/new_foo.rb"], # added
     )
   end
   let(:connection) do

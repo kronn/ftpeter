@@ -1,7 +1,7 @@
-# TODO check if needed here (they shouldn't be)
+# TODO: check if needed here (they shouldn't be)
 require "pathname"
 
-# TODO setup help and option-parsing
+# TODO: setup help and option-parsing
 module Ftpeter
   autoload :CLI, "ftpeter/cli"
   autoload :VERSION, "ftpeter/version"

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe Ftpeter::Transport::Lftp do
-  subject{ described_class.new(connection, changes) }
+  subject { described_class.new(connection, changes) }
   let(:changes) do
     Ftpeter::Changes.new(
-      [], #deleted
-      ["lib/foo.rb"], #changed
-      ["lib/new_foo.rb"], #added
+      [], # deleted
+      ["lib/foo.rb"], # changed
+      ["lib/new_foo.rb"], # added
     )
   end
   let(:connection) do
