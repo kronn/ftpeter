@@ -1,10 +1,11 @@
+# frozen_string_literal: true
 module Ftpeter
   Changes = Struct.new(:deleted, :changed, :added) do
     def newdirs
       @newdirs ||= added
                      .map { |fn| Pathname.new(fn).dirname.to_s }
                      .uniq
-                     .reject { |fn| fn == "." }
+                     .reject { |fn| fn == '.' }
     end
   end
 end

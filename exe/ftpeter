@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
-require "ftpeter/cli"
+require 'ftpeter/cli'
 
 Ftpeter::CLI.new(ARGV).go

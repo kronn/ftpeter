@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
@@ -16,10 +17,10 @@
 # and, you'll have to watch "config/Guardfile" instead of "Guardfile"
 
 guard :rubocop do
-  watch(%r{.+\.rb$})
-  watch(%r{.+\.gemspec$})
-  watch(%r{(Rake|Gem)file$})
-  watch(%r{(?:.+/)?\.rubocop\.yml$}) { |m| File.dirname(m[0]) }
+  watch(%r~.+\.rb$~)
+  watch(%r~.+\.gemspec$~)
+  watch(%r~(Rake|Gem)file$~)
+  watch(%r~(?:.+/)?\.rubocop\.yml$~) { |m| File.dirname(m[0]) }
 end
 
 # Note: The cmd option is now required due to the increasing number of ways
@@ -31,8 +32,8 @@ end
 #  * zeus: 'zeus rspec' (requires the server to be started separately)
 #  * 'just' rspec: 'rspec'
 
-guard :rspec, cmd: "rspec" do
-  require "guard/rspec/dsl"
+guard :rspec, cmd: 'rspec' do
+  require 'guard/rspec/dsl'
   dsl = Guard::RSpec::Dsl.new(self)
 
   # Feel free to open issues for suggestions and improvements

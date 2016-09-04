@@ -14,6 +14,12 @@ Style/HashSyntax:
 Style/MultilineMethodCallIndentation:
   EnforcedStyle: indented_relative_to_receiver
 
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%r': ~~
 
 # Rejection of nonsensical Rules and things I don't care about
 

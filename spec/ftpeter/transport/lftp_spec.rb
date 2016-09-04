@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Ftpeter::Transport::Lftp do
@@ -5,12 +6,12 @@ describe Ftpeter::Transport::Lftp do
   let(:changes) do
     Ftpeter::Changes.new(
       [], # deleted
-      ["lib/foo.rb"], # changed
-      ["lib/new_foo.rb"], # added
+      ['lib/foo.rb'], # changed
+      ['lib/new_foo.rb'], # added
     )
   end
   let(:connection) do
-    Ftpeter::Connection.new("example.net", nil, "/", nil)
+    Ftpeter::Connection.new('example.net', nil, '/', nil)
   end
 
   it 'generates a set of commands' do

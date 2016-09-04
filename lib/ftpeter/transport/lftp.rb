@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'pathname'
 
 module Ftpeter
@@ -8,7 +9,7 @@ module Ftpeter
       def initialize(connection, changes)
         @changes = changes
         @lftp_script = []
-        @script = Pathname.new("./lftp_script").expand_path
+        @script = Pathname.new('./lftp_script').expand_path
 
         @host = connection.host
         @credentials = connection.credentials
@@ -22,7 +23,7 @@ module Ftpeter
         # lftp connection header
         @lftp_script << "open #{@host}"
         if @credentials
-          @lftp_script << "user #{@credentials["user"]} #{@credentials["pass"]}"
+          @lftp_script << "user #{@credentials['user']} #{@credentials['pass']}"
         end
         @lftp_script << "cd #{@dir}"
 
@@ -59,7 +60,7 @@ module Ftpeter
       end
 
       def persist
-        script.open("w") do |f|
+        script.open('w') do |f|
           f << @lftp_script.flatten.join("\n")
           f << "\n"
         end

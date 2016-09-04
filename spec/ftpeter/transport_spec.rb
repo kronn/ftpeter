@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Ftpeter::Transport do
@@ -5,13 +6,13 @@ describe Ftpeter::Transport do
   let(:changes) do
     Ftpeter::Changes.new(
       [], # deleted
-      ["lib/foo.rb"], # changed
-      ["lib/new_foo.rb"], # added
+      ['lib/foo.rb'], # changed
+      ['lib/new_foo.rb'], # added
     )
   end
   let(:connection) do
     Struct.new(:host, :credentials, :dir, :commands)
-      .new("example.net", nil, "/", nil)
+      .new('example.net', nil, '/', nil)
   end
 
   it 'can forward the transport to a backend' do
