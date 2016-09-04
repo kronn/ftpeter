@@ -5,4 +5,5 @@ gemspec
 
 group :development do
   gem 'guard-rubocop'
+  gem 'guard-rspec'
 end
