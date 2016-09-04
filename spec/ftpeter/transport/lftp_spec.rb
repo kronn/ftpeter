@@ -1,20 +1,21 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Ftpeter::Transport::Lftp do
-  subject{ described_class.new(connection, changes) }
+  subject { described_class.new(connection, changes) }
   let(:changes) do
     Ftpeter::Changes.new(
-      [], #deleted
-      ["lib/foo.rb"], #changed
-      ["lib/new_foo.rb"], #added
+      [], # deleted
+      ['lib/foo.rb'], # changed
+      ['lib/new_foo.rb'], # added
     )
   end
   let(:connection) do
-    Ftpeter::Connection.new("example.net", nil, "/", nil)
+    Ftpeter::Connection.new('example.net', nil, '/', nil)
   end
 
   it 'generates a set of commands' do
-    expected_script = <<-EOSCRIPT.lines.map { |l| l.chomp }
+    expected_script = <<-EOSCRIPT.lines.map(&:chomp)
 open example.net
 cd /
 mkdir -p lib

@@ -1,36 +1,38 @@
-require "pathname"
+# frozen_string_literal: true
+require 'pathname'
 
 module Ftpeter
   class CLI
     def initialize(args)
-      raise ArgumentError, "Please specify a host to deploy to" unless args[0]
+      raise ArgumentError, 'Please specify a host to deploy to' unless args[0]
 
       @host = args[0]
-      @dir  = args[1] || "/" # the directory to change into
-      @last = args[2] || "origin/master" # get the last deployed version and current version
+      @dir  = args[1] || '/' # the directory to change into
+      @last = args[2] || 'origin/master' # get the last deployed version
 
       configure
     end
 
+    # TODO: extract code into Connection-class
     def configure
-      cleaned_host = if @host =~ %r!//!
-                        require "uri"
-                        URI(@host).host
-                      else
-                        @host
-                      end
+      cleaned_host = if @host =~ %r~//~
+                       require 'uri'
+                       URI(@host).host
+                     else
+                       @host
+                     end
 
       @credentials = begin
                        `grep #{cleaned_host} ~/.netrc`.chomp
                          .split("\n").first
                          .match(/login (?<user>\S+) password (?<pass>\S+)/)
-                     rescue NoMethodError => e
+                     rescue NoMethodError
                        nil
                      end
 
       @commands    = begin
-                       Pathname.new("./.ftpeterrc").read.chomp
-                     rescue Errno::ENOENT=> e
+                       Pathname.new('./.ftpeterrc').read.chomp
+                     rescue Errno::ENOENT
                        nil
                      end
 
@@ -46,7 +48,7 @@ module Ftpeter
       changes = get_changes_from(:git)
       upload  = transport(changes).via(@connection, :lftp)
 
-      $stdout.puts "="*80, upload.inform, "="*80, nil
+      $stdout.puts '=' * 80, upload.inform, '=' * 80, nil
       upload.persist
 
       if okay?
@@ -56,8 +58,8 @@ module Ftpeter
       end
     end
 
-    def confirm(confirmation = "yes")
-      $stderr.print "[yes, No] > "
+    def confirm(confirmation = 'yes')
+      $stderr.print '[yes, No] > '
 
       if $stdin.gets.chomp != confirmation
         raise "you did not enter '#{confirmation}', aborting"
@@ -67,9 +69,9 @@ module Ftpeter
     end
 
     def okay?
-      $stdout.puts "is this script okay?"
+      $stdout.puts 'is this script okay?'
       begin
-        confirm("yes")
+        confirm('yes')
       rescue RuntimeError
         false
       end
@@ -86,4 +88,3 @@ module Ftpeter
     end
   end
 end
-

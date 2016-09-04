@@ -1,13 +1,13 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Ftpeter::CLI do
   include FakeFS::SpecHelpers
 
-  subject { described_class.new(["example.net"]) }
+  subject { described_class.new(['example.net']) }
 
-  # FIXME remove this once we don't parse netrc ourselves anymore
+  # FIXME: remove this once we don't parse netrc ourselves anymore
   before(:all) { FileUtils.touch("#{ENV['HOME']}/.netrc") }
-
 
   it 'expects at least a hostname' do
     expect {
@@ -19,13 +19,13 @@ describe Ftpeter::CLI do
     expect(subject).to receive(:okay?).and_return(false)
     expect(subject).to receive(:get_changes_from).and_return(
       Ftpeter::Changes.new(
-        [], #deleted
-        ["lib/foo.rb"], #changed
-        ["lib/new_foo.rb"], #added
+        [], # deleted
+        ['lib/foo.rb'], # changed
+        ['lib/new_foo.rb'], # added
       )
     )
 
-    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr("/", "\/")}$"}
+    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr('/', "\/")}$" }
 open example.net
 cd /
 mkdir -p lib
@@ -44,7 +44,8 @@ put lib/foo.rb -o lib/foo.rb
     output = $stdout.string
 
     # the generated script
-    expect(Pathname.new('./lftp_script').expand_path.read).to match /#{expected_script}/
+    expected_script_fn = Pathname.new('./lftp_script').expand_path.read
+    expect(expected_script_fn).to match /#{expected_script}/
 
     # output of the script to the user
     expect(output).to match %r~^\={80}$#{expected_script}.*\={80}$~m
@@ -57,16 +58,16 @@ put lib/foo.rb -o lib/foo.rb
     expect(subject).to receive(:okay?).and_return(true)
     expect(subject).to receive(:get_changes_from).and_return(
       Ftpeter::Changes.new(
-        [], #deleted
-        ["lib/foo.rb"], #changed
-        ["lib/new_foo.rb"], #added
+        [], # deleted
+        ['lib/foo.rb'], # changed
+        ['lib/new_foo.rb'], # added
       )
     )
     expect_any_instance_of(Ftpeter::Transport::Lftp)
       .to receive(:execute)
       .and_return(true)
 
-    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr("/", "\/")}$"}
+    expected_script = <<-EOSCRIPT.lines.map { |l| "^#{l.tr('/', "\/")}$" }
 open example.net
 cd /
 mkdir -p lib

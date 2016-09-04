@@ -1,13 +1,20 @@
+# frozen_string_literal: true
 module Ftpeter
   class Transport
-    autoload :Lftp, "ftpeter/transport/lftp"
+    class Unsupported < ArgumentError
+      def message
+        'There is only lftp-support for now'
+      end
+    end
+
+    autoload :Lftp, 'ftpeter/transport/lftp'
 
     def initialize(changes)
       @changes = changes
     end
 
     def via(connection, uploader)
-      raise ArgumentError, "There's only lftp-support for now" unless uploader == :lftp
+      raise Unsupported unless uploader == :lftp
 
       Ftpeter::Transport::Lftp.new(connection, @changes)
     end
