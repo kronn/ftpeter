@@ -15,7 +15,7 @@ describe Ftpeter::Transport::Lftp do
   end
 
   it 'generates a set of commands' do
-    expected_script = <<-EOSCRIPT.lines.map { |l| l.chomp }
+    expected_script = <<-EOSCRIPT.lines.map(&:chomp)
 open example.net
 cd /
 mkdir -p lib

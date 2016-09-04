@@ -21,6 +21,9 @@ Style/PercentLiteralDelimiters:
   PreferredDelimiters:
     '%r': ~~
 
+Style/AndOr:
+  EnforcedStyle: conditionals
+
 # Rejection of nonsensical Rules and things I don't care about
 
 Lint/AmbiguousRegexpLiteral:
