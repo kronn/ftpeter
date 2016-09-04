@@ -11,13 +11,14 @@ Style/BlockDelimiters:
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
 
+Style/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
 
 
 # Rejection of nonsensical Rules and things I don't care about
 
 Lint/AmbiguousRegexpLiteral:
-  Enabled:
-    false
+  Enabled: false
 
 Style/RegexpLiteral:
   Enabled: false

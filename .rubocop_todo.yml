@@ -49,21 +49,6 @@ Style/GuardClause:
     - 'lib/ftpeter/cli.rb'
 
 # Offense count: 1
-Style/MultilineBlockChain:
-  Exclude:
-    - 'lib/ftpeter/changes.rb'
-
-# Offense count: 5
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, IndentationWidth.
-# SupportedStyles: aligned, indented, indented_relative_to_receiver
-Style/MultilineMethodCallIndentation:
-  Exclude:
-    - 'ftpeter.gemspec'
-    - 'lib/ftpeter/cli.rb'
-    - 'spec/ftpeter/transport_spec.rb'
-
-# Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: PreferredDelimiters.
 Style/PercentLiteralDelimiters:
