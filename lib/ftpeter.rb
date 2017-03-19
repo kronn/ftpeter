@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-# TODO: check if needed here (they shouldn't be)
-require 'pathname'
 
 # TODO: setup help and option-parsing
 module Ftpeter
